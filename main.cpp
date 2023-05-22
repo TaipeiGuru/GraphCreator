@@ -8,16 +8,15 @@
 using namespace std;
 
 // Function prototypes
-void addVertex(Node* &adjacency, char* label);
-void addEdge(Node* &adjacency, char* label);
-void deleteVertex(Node* &adjacency, char* label);
-void deleteEdge(Node* &adjacency, char* label);
-void findPath(Node* &adjacency, char* begin, char* end);
-void print(Node* adjacency);
+void addVertex(Node** &adjacency, char* label);
+void addEdge(Node** &adjacency, char* label);
+void deleteVertex(Node** &adjacency, char* label);
+void deleteEdge(Node** &adjacency, char* label);
+void findPath(Node** &adjacency, char* begin, char* end);
+void print(Node** adjacency);
 
 int main() { 
-  
-	// Initializing variables
+  // Initializing variables
   Node* adjacency[21];
   for(int i = 0; i < 21; i++) {
     adjacency[i] = NULL; 
