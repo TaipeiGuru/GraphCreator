@@ -80,3 +80,11 @@ int main() {
   return 0;
 }
 
+void addVertex(Node** &adjacency, char* label) {
+	int i = 0;
+  while(adjacency[i] == NULL) {
+    i++; 
+  }
+  adjacency[i] = new Node*(label);
+}
+
