@@ -13,7 +13,7 @@ class Node {
   ~Node();
  
  // getters
-  int getLabel();
+  char* getLabel();
   Node* getNext();
  
  // setters
