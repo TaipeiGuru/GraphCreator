@@ -18,9 +18,11 @@ void print(Node** adjacency);
 int main() { 
   // Initializing variables
   Node* adjacency[21];
-  for(int i = 0; i < 21; i++) {
+  for(int i = 1; i < 21; i++) {
     adjacency[i] = NULL; 
   }
+  Node* head = new Node("head");
+  adjacency[0] = head;
   char input[20];
 
   cout << "Welcome to Graph Creator!" << endl;
@@ -85,6 +87,26 @@ void addVertex(Node** &adjacency, char* label) {
   while(adjacency[i] == NULL) {
     i++; 
   }
-  adjacency[i] = new Node*(label);
+  Node* newNode = new Node(label);
+  adjacency[i] = newNode;
+  Node* tempNode = adjacency[0];
+  while(tempNode->getNext() != NULL) {
+    tempNode = tempNode->getNext();
+  }
+  Node* newHeaderNode = new Node(label);
+  tempNode->setNext(newHeaderNode);
 }
+
+void print(Node** adjacency) {
+  for(int i = 0; i < 21; i++) {
+    if(adjacency[i] != NULL) {
+      Node* tempNode = adjacency[i];
+      while(tempNode != NULL) {
+        cout << tempNode->getLabel() << "\t";
+        tempNode = tempNode->getNext();
+      }
+    }
+  }
+}
+
 
