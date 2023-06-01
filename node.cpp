@@ -9,6 +9,8 @@ using namespace std;
 Node::Node(char* myLabel) {
   next = NULL;
   strcpy(label, myLabel);
+  strcpy(beginVertex, "NULL");
+  strcpy(endVertex, "NULL");
 }
 
 Node::~Node() {
