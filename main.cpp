@@ -103,7 +103,12 @@ void deleteVertex(Node** adjacency, char* label, int &vertexNum) {
   temp = NULL;
   for(int i = 1; i < vertexNum; i++) {
     if(strcmp(adjacency[i]->getLabel(), label) == 0) {
-      // delete all Nodes in the linked list
+      Node* current = adjacency[i];
+      while(current != NULL) {
+	adjacency[i] = current->getNext();
+	delete current;
+	current = adjacency[i];
+      }
     }
   }
 }
