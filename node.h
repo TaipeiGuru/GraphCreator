@@ -14,15 +14,21 @@ class Node {
  
  // getters
   char* getLabel();
+  char* getBeginVertex();
+  char* getEndVertex();
   Node* getNext();
  
  // setters
   void setNext(Node* nextNode);
   void setLabel(char* myLabel);
+  void setBeginVertex();
+  void setEndVertex();
 
  private:
  // node data
   Node* next;
   char label[10];
+  char beginVertex[10];
+  char endVertex[10];
 };
 #endif
