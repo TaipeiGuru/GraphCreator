@@ -20,6 +20,14 @@ char* Node::getLabel() {
   return label;
 }
 
+char* Node::getBeginVertex() {
+  return beginVertex;
+}
+
+char* Node::getEndVertex() {
+  return endVertex;
+}
+
 Node* Node::getNext() {
   return next; 
 }
@@ -27,6 +35,14 @@ Node* Node::getNext() {
 // Setters
 void Node::setLabel(char* myLabel) {
   strcpy(label, myLabel);
+}
+
+void Node::setBeginVertex(char* myLabel) {
+  strcpy(beginVertex, myLabel);
+}
+
+void Node::setEndVertex(char* myLabel) {
+  strcpy(endVertex, myLabel);
 }
 
 void Node::setNext(Node* nextNode) {
