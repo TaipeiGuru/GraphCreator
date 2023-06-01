@@ -21,8 +21,8 @@ class Node {
  // setters
   void setNext(Node* nextNode);
   void setLabel(char* myLabel);
-  void setBeginVertex();
-  void setEndVertex();
+  void setBeginVertex(char* myLabel);
+  void setEndVertex(char* myLabel);
 
  private:
  // node data
