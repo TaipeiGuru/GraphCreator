@@ -17,12 +17,14 @@ class Node {
   char* getBeginVertex();
   char* getEndVertex();
   Node* getNext();
+  int getWeight();
  
  // setters
   void setNext(Node* nextNode);
   void setLabel(char* myLabel);
   void setBeginVertex(char* myLabel);
   void setEndVertex(char* myLabel);
+  void setWeight(int myWeight);
 
  private:
  // node data
@@ -30,5 +32,6 @@ class Node {
   char label[10];
   char beginVertex[10];
   char endVertex[10];
+  int weight;
 };
 #endif
