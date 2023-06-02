@@ -1,3 +1,4 @@
+
 // This is the Binary Search Tree project, which sorts integer values into a binary tree. Last modified by Jason Randolph on 4-7-23.
 
 // Imports
@@ -9,9 +10,9 @@ using namespace std;
 
 // Function prototypes
 void addVertex(Node** adjacency, char* label, int &vertexNum);
-void addEdge(Node** adjacency, char* label);
+void addEdge(Node** adjacency, char* begin, char* end, int weight);
 void deleteVertex(Node** adjacency, char* label, int &vertexNum);
-void deleteEdge(Node** adjacency, char* label);
+void deleteEdge(Node** adjacency, char* begin, char* end);
 void findPath(Node** adjacency, char* begin, char* end);
 void print(Node** adjacency);
 
@@ -45,11 +46,22 @@ int main() {
       cin.ignore(10000, '\n');
       addVertex(adjacency, input, vertexNum);
     } else if(strcmp(input, "ADD EDGE") == 0) {
-      cout << "What is the edge label?" << endl;
-      cin >> input;
+      char begin[10];
+      char end[10];
+      int weight;
+      cout << "What is the edge weight?" << endl;
+      cin >> weight;
       cin.clear();
       cin.ignore(10000, '\n');
-      // addEdge(adjacency, input);
+      cout << "What is the first vertex?" << endl;
+      cin >> begin;
+      cin.clear();
+      cin.ignore(10000, '\n');
+      cout << "What is the last vertex?" << endl;
+      cin >> end;
+      cin.clear();
+      cin.ignore(10000, '\n');
+      addEdge(adjacency, begin, end, weight);
     } else if(strcmp(input, "REMOVE VERTEX") == 0) {
       cout << "What is the vertex label?" << endl;
       cin >> input;
@@ -57,11 +69,17 @@ int main() {
       cin.ignore(10000, '\n');
       deleteVertex(adjacency, input, vertexNum);
     } else if(strcmp(input, "REMOVE EDGE") == 0) {
-      cout << "What is the edge label?" << endl;
-      cin >> input;
+      char begin[10];
+      char end[10];
+      cout << "What is the first node?" << endl;
+      cin >> begin;
       cin.clear();
       cin.ignore(10000, '\n');
-      // deleteEdge(adjacency, input);
+      cout << "What is the last node?" << endl;
+      cin >> end;
+      cin.clear();
+      cin.ignore(10000, '\n');
+      deleteEdge(adjacency, begin, end);
     } else if(strcmp(input, "PATH") == 0) {
       char begin[10];
       char end[10];
@@ -85,9 +103,82 @@ int main() {
   return 0;
 }
 
+void deleteEdge(Node** adjacency, char* begin, char* end) {
+  int counter = 0;
+  Node* temp = adjacency[0];
+  // find column number of vertex
+  while(strcmp(temp->getLabel(), end) != 0) {
+    if(temp->getNext() != NULL) {
+      temp = temp->getNext();
+      counter++;
+    } else {
+      cout << "Your ending vertex doesn't exist." << endl;
+      return;
+    }
+  }
+  // find row number of vertex
+  for(int i = 1; i < 21; i++) {
+    if(adjacency[i] != NULL) { 
+      if(strcmp(adjacency[i]->getLabel(), begin) == 0) {
+        // find intersecting Node and change data
+        Node* current = adjacency[i];
+        for(int j = 0; j < counter; j++) {
+          current = current->getNext();
+        }
+        char temp[10];
+        strcpy(temp, "F");
+        current->setLabel(temp);
+        strcpy(temp, "NULL");
+        current->setBeginVertex(temp);
+        strcpy(temp, "NULL");
+        current->setEndVertex(temp);
+        current->setWeight(0);
+        break;
+      }
+    }
+  }
+}
+
+void addEdge(Node** adjacency, char* begin, char* end, int weight) {
+  int counter = 0;
+  Node* temp = adjacency[0];
+  // find column number of vertex
+  while(strcmp(temp->getLabel(), end) != 0) {
+    if(temp->getNext() != NULL) {
+      temp = temp->getNext();
+      counter++;
+    } else {
+      cout << "Your ending vertex doesn't exist." << endl;
+      return;
+    }
+  }
+  // find row number of vertex
+  for(int i = 1; i < 21; i++) {
+    if(adjacency[i] != NULL) { 
+      if(strcmp(adjacency[i]->getLabel(), begin) == 0) {
+        // find intersecting Node and change data
+        Node* current = adjacency[i];
+        for(int j = 0; j < counter; j++) {
+          current = current->getNext();
+        }
+        char temp[10];
+        strcpy(temp, "T");
+        current->setLabel(temp);
+        strcpy(temp, begin);
+        current->setBeginVertex(temp);
+        strcpy(temp, end);
+        current->setEndVertex(temp);
+        current->setWeight(weight);
+        break;
+      }
+    }
+  }
+}
+
+// vertex does not exist?
 void deleteVertex(Node** adjacency, char* label, int &vertexNum) {
-  vertexNum--;
   int a = 0;
+  // find deleted vertex in header
   Node* current = adjacency[0];
   while(current != NULL) {
     if(strcmp(current->getNext()->getLabel(), label) != 0) {
@@ -97,40 +188,53 @@ void deleteVertex(Node** adjacency, char* label, int &vertexNum) {
       break;
     }
   }
+  // delete vertex in header
   Node* temp = current->getNext();
   current->setNext(current->getNext()->getNext());
   delete temp;
   temp = NULL;
-  for(int i = 1; i < vertexNum; i++) {
-    if(strcmp(adjacency[i]->getLabel(), label) == 0) {
-      Node* current = adjacency[i];
-      while(current != NULL) {
-	adjacency[i] = current->getNext();
-	delete current;
-	current = adjacency[i];
-      }
-    }
+  // run through array
+  for(int i = 1; i < 21; i++) {
+    if(adjacency[i] != NULL) {
+      // if vertex matches, delete all items in LL
+      if(strcmp(adjacency[i]->getLabel(), label) == 0) {
+        Node* current = adjacency[i];
+        while(current != NULL) {
+  	      adjacency[i] = current->getNext();
+  	      delete current;
+  	      current = adjacency[i];
+        }
+        // otherwise, traverse to deleted Node, delete it, and repair LL
+      } else {
+        Node* temp = adjacency[i];
+        for(int j = 0; j < a; j++) {
+          temp = temp->getNext();
+        }
+        Node* tempNode = temp->getNext();
+        if(temp->getNext()->getNext() != NULL) {
+          temp->setNext(temp->getNext()->getNext());
+        } else {
+          temp->setNext(NULL);
+        }
+        delete tempNode;
+        tempNode = NULL;
+      }  
+    } 
   }
+  vertexNum--;
 }
 
 void addVertex(Node** adjacency, char* label, int &vertexNum) {
   vertexNum++;
   int i = 1;
+  // find empty row
   while(adjacency[i] != NULL) {
     i++; 
   }
+  // add new vertex in column
   Node* newNode = new Node(label);
   adjacency[i] = newNode;
-  for(int k = 1; k < i; k++) {
-    Node* current = adjacency[k];
-    while(current->getNext() != NULL) {
-      current = current->getNext();
-    }
-    char label[2];
-    strcpy(label, "F");
-    Node* edge = new Node(label);
-    current->setNext(edge);
-  }
+  // add new LL at new vertex row
   for(int j = 0; j < vertexNum; j++) {
     char label[2];
     strcpy(label, "F");
@@ -138,6 +242,20 @@ void addVertex(Node** adjacency, char* label, int &vertexNum) {
     newNode->setNext(edge);
     newNode = newNode->getNext();
   }
+  // add new cells at non-vertex rows
+  for(int k = 1; k <= vertexNum; k++) {
+    if(strcmp(adjacency[k]->getLabel(), label) != 0) {
+      Node* current = adjacency[k];
+      while(current->getNext() != NULL) {
+        current = current->getNext();
+      }
+      char label[2];
+      strcpy(label, "F");
+      Node* edge = new Node(label);
+      current->setNext(edge);
+    }
+  }
+  // add new vertex to header
   Node* tempNode = adjacency[0];
   while(tempNode->getNext() != NULL) {
     tempNode = tempNode->getNext();
@@ -162,5 +280,3 @@ void print(Node** adjacency) {
     }
   }
 }
-
-
