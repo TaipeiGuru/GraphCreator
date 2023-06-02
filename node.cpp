@@ -11,6 +11,7 @@ Node::Node(char* myLabel) {
   strcpy(label, myLabel);
   strcpy(beginVertex, "NULL");
   strcpy(endVertex, "NULL");
+  weight = 0;
 }
 
 Node::~Node() {
@@ -34,6 +35,10 @@ Node* Node::getNext() {
   return next; 
 }
 
+int Node::getWeight() {
+  return weight;
+}
+
 // Setters
 void Node::setLabel(char* myLabel) {
   strcpy(label, myLabel);
@@ -49,4 +54,8 @@ void Node::setEndVertex(char* myLabel) {
 
 void Node::setNext(Node* nextNode) {
   next = nextNode; 
+}
+
+void Node::setWeight(int myWeight) {
+  weight = myWeight;
 }
