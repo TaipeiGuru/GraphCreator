@@ -16,7 +16,7 @@ void deleteVertex(Node** adjacency, char* label, int &vertexNum);
 void deleteEdge(Node** adjacency, char* begin, char* end);
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum);
 void print(Node** adjacency);
-char* intToChar(int weight);
+char* intToChar(int weight, char* myChar);
 
 int main() { 
   // Initializing variables
@@ -122,6 +122,7 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   Node* current = adjacency[0]->getNext();
   for(int i = 0; i < vertexNum; i++) {
     if(current != NULL) {
+      strcpy(visited[i], " ");
       strcpy(unVisited[i], current->getLabel());
       strcpy(table[i][0], current->getLabel());
       if(strcmp(table[i][0], begin) == 0) {
@@ -135,16 +136,27 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   }
   int smallest;
   int index;
+  int unvisited = vertexNum;
   char smallestVertex[10];
-  //while((sizeof(unVisited)/sizeof(unVisited[0])) > 0) {
+  while(unvisited > 0) {
     smallest = 999999;
     for(int c = 0; c < vertexNum; c++) {
       int data = atoi(table[c][1]);
       if(data < smallest) {
-        smallest = data;
-        index = c;
+	bool exists = false;
+	for(int h = 0; h < vertexNum; h++) {
+	  if(strcmp(visited[h], table[c][0]) == 0) {
+	    exists = true;
+	  }
+	}
+	if(exists == false) { 
+	  smallest = data;
+	  index = c;
+	  break;
+	}
       }
     }
+    cout << index << endl;
     strcpy(smallestVertex, table[index][0]);
     Node* traversal;
     for(int d = 0; d < 20; d++) {
@@ -160,23 +172,26 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
         int weight = traversal->getWeight();
         for(int f = 0; f < vertexNum; f++) {
           if(strcmp(table[f][0], end) == 0) {
-            strcpy(table[f][1], intToChar(weight));
+	    char* myChar;
+            strcpy(table[f][1], intToChar(weight, myChar));
             strcpy(table[f][2], smallestVertex);
           }
         }
       }
       traversal = traversal->getNext();
     }
-  //}
+    strcpy(visited[vertexNum-unvisited], table[index][0]);
+    unvisited--;
+  }
   for(int a = 0; a < vertexNum; a++) {
-  	for(int b = 0; b < 3; b++) {
-  	  cout << table[a][b] << " ";
-  	}
-  	cout << endl;
+    for(int b = 0; b < 3; b++) {
+      cout << table[a][b] << " ";
+    }
+    cout << endl;
   }
 }
 
-char* intToChar(int weight) {
+char* intToChar(int weight, char* myChar) {
   int divisor = 100000;
   int modulo;
   int numDegree = 0;
@@ -186,8 +201,8 @@ char* intToChar(int weight) {
     dupNum /= 10;
   }
   numDegree++;
-  char num[numDegree+1];
-  num[numDegree] = '\0';
+  myChar = new char[numDegree+1];
+  myChar[numDegree] = '\0';
   for(int b = 0; b < 3; b++) {
     while(weight % divisor != 0 && weight % divisor > 9) {
       divisor /= 10;
@@ -195,13 +210,13 @@ char* intToChar(int weight) {
     modulo = weight % divisor;
     weight = (weight-modulo)/10;
     for(int i = numDegree-1; i >= 0; i--) {
-      if(isdigit(num[i]) == 0) {
-        num[i] = (char)modulo+'0';
+      if(isdigit(myChar[i]) == 0) {
+        myChar[i] = (char)modulo+'0';
         break;
       }
     }
   }
-  return num;
+  return myChar;
 }
 
 void deleteEdge(Node** adjacency, char* begin, char* end) {
