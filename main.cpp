@@ -1,4 +1,4 @@
- 
+
 // This is the Binary Search Tree project, which sorts integer values into a binary tree. Last modified by Jason Randolph on 4-7-23.
 
 // Imports
@@ -17,7 +17,6 @@ void deleteEdge(Node** adjacency, char* begin, char* end);
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum);
 void print(Node** adjacency);
 char* intToChar(int weight, char* myChar);
-int charToInt(char* myChar);
 
 int main() { 
   // Initializing variables
@@ -121,8 +120,6 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     unVisited[i] = new char[10];
   }
   Node* current = adjacency[0]->getNext();
-  
-  // configure visited and unVisited arrays
   for(int i = 0; i < vertexNum; i++) {
     if(current != NULL) {
       strcpy(visited[i], " ");
@@ -141,7 +138,7 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   int index;
   int unvisited = vertexNum;
   char smallestVertex[10];
-  // while(unvisited > 0) {
+  while(unvisited > 0) {
     smallest = 999999;
     for(int c = 0; c < vertexNum; c++) {
       int data = atoi(table[c][1]);
@@ -153,10 +150,10 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
 	  }
 	}
 	if(exists == false) { 
-          smallest = data;
-          index = c;
-          break;
-        }
+	  smallest = data;
+	  index = c;
+	  break;
+	}
       }
     }
     cout << index << endl;
@@ -168,25 +165,16 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
         break;
       }
     }
-    // find nodes in LL that match the end node
     for(int e = 0; e < vertexNum; e++) {
-      // edge is found
       if(strcmp(traversal->getLabel(), "T") == 0) {
         char end[10];
         strcpy(end, traversal->getEndVertex());
         int weight = traversal->getWeight();
         for(int f = 0; f < vertexNum; f++) {
-          // find the end vertex in the Djikstra table
           if(strcmp(table[f][0], end) == 0) {
-            // if begin vertex value + edge weight is < end vertex value, replace
-            int newWeight = charToInt(table[f][0]) + weight;
-            int oldWeight = charToInt(table[index][0]);
-            cout << "new: " << newWeight << " old: " << oldWeight << endl;
-            if(newWeight < oldWeight) {
-              char* myChar;
-              strcpy(table[f][1], intToChar(weight, myChar));
-              strcpy(table[f][2], smallestVertex);
-            }
+	    char* myChar;
+            strcpy(table[f][1], intToChar(weight, myChar));
+            strcpy(table[f][2], smallestVertex);
           }
         }
       }
@@ -194,24 +182,13 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     }
     strcpy(visited[vertexNum-unvisited], table[index][0]);
     unvisited--;
-    // }
+  }
   for(int a = 0; a < vertexNum; a++) {
     for(int b = 0; b < 3; b++) {
       cout << table[a][b] << " ";
     }
     cout << endl;
   }
-}
-
-int charToInt(char* myChar) {
-  int size = strlen(myChar);
-  int degreeCounter = 1;
-  int output = 0;
-  for(int i = size-1; i >= 0; i--) {
-    output += (myChar[i]-'0')*degreeCounter;
-    degreeCounter *= 10;
-  }
-  return output;
 }
 
 char* intToChar(int weight, char* myChar) {
