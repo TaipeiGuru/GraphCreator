@@ -1,4 +1,4 @@
-
+ 
 // This is the Binary Search Tree project, which sorts integer values into a binary tree. Last modified by Jason Randolph on 4-7-23.
 
 // Imports
@@ -17,6 +17,7 @@ void deleteEdge(Node** adjacency, char* begin, char* end);
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum);
 void print(Node** adjacency);
 char* intToChar(int weight, char* myChar);
+int charToInt(char* myChar);
 
 int main() { 
   // Initializing variables
@@ -140,18 +141,18 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   int index;
   int unvisited = vertexNum;
   char smallestVertex[10];
-  while(unvisited > 0) {
+  // while(unvisited > 0) {
     smallest = 999999;
     for(int c = 0; c < vertexNum; c++) {
       int data = atoi(table[c][1]);
       if(data < smallest) {
-	      bool exists = false;
-	      for(int h = 0; h < vertexNum; h++) {
-	        if(strcmp(visited[h], table[c][0]) == 0) {
-	          exists = true;
-	        }
-	      }
-	      if(exists == false) { 
+	bool exists = false;
+	for(int h = 0; h < vertexNum; h++) {
+	  if(strcmp(visited[h], table[c][0]) == 0) {
+	    exists = true;
+	  }
+	}
+	if(exists == false) { 
           smallest = data;
           index = c;
           break;
@@ -167,7 +168,7 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
         break;
       }
     }
-	  // find nodes in LL that match the end node
+    // find nodes in LL that match the end node
     for(int e = 0; e < vertexNum; e++) {
       // edge is found
       if(strcmp(traversal->getLabel(), "T") == 0) {
@@ -193,7 +194,7 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     }
     strcpy(visited[vertexNum-unvisited], table[index][0]);
     unvisited--;
-  }
+    // }
   for(int a = 0; a < vertexNum; a++) {
     for(int b = 0; b < 3; b++) {
       cout << table[a][b] << " ";

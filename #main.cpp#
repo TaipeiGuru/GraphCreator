@@ -1,4 +1,4 @@
-
+ 
 // This is the Binary Search Tree project, which sorts integer values into a binary tree. Last modified by Jason Randolph on 4-7-23.
 
 // Imports
@@ -141,25 +141,24 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   int index;
   int unvisited = vertexNum;
   char smallestVertex[10];
-  while(unvisited > 0) {
+  // while(unvisited > 0) {
     smallest = 999999;
     for(int c = 0; c < vertexNum; c++) {
       int data = atoi(table[c][1]);
       if(data < smallest) {
-	      bool exists = false;
-	      for(int h = 0; h < vertexNum; h++) {
-	        if(strcmp(visited[h], table[c][0]) == 0) {
-	          exists = true;
-	        }
-	      }
-	      if(exists == false) { 
+	bool exists = false;
+	for(int h = 0; h < vertexNum; h++) {
+	  if(strcmp(visited[h], table[c][0]) == 0) {
+	    exists = true;
+	  }
+	}
+	if(exists == false) { 
           smallest = data;
           index = c;
           break;
         }
       }
     }
-    cout << index << endl;
     strcpy(smallestVertex, table[index][0]);
     Node* traversal;
     for(int d = 0; d < 20; d++) {
@@ -174,6 +173,7 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
       if(strcmp(traversal->getLabel(), "T") == 0) {
         char end[10];
         strcpy(end, traversal->getEndVertex());
+	cout << end << endl;
         int weight = traversal->getWeight();
         for(int f = 0; f < vertexNum; f++) {
           // find the end vertex in the Djikstra table
@@ -194,7 +194,7 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     }
     strcpy(visited[vertexNum-unvisited], table[index][0]);
     unvisited--;
-  }
+    // }
   for(int a = 0; a < vertexNum; a++) {
     for(int b = 0; b < 3; b++) {
       cout << table[a][b] << " ";
