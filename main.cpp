@@ -17,6 +17,7 @@ void deleteEdge(Node** adjacency, char* begin, char* end);
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum);
 void print(Node** adjacency);
 char* intToChar(int weight, char* myChar);
+int charToInt(char* myChar);
 
 int main() { 
   // Initializing variables
@@ -143,21 +144,21 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     for(int c = 0; c < vertexNum; c++) {
       int data = atoi(table[c][1]);
       if(data < smallest) {
-	bool exists = false;
-	for(int h = 0; h < vertexNum; h++) {
-	  if(strcmp(visited[h], table[c][0]) == 0) {
-	    exists = true;
-	  }
-	}
-	if(exists == false) { 
-	  smallest = data;
-	  index = c;
-	  break;
-	}
+      	bool exists = false;
+      	for(int h = 0; h < vertexNum; h++) {
+      	  if(strcmp(visited[h], table[c][0]) == 0) {
+      	    exists = true;
+      	  }
+      	}
+      	if(exists == false) { 
+      	  smallest = data;
+      	  index = c;
+      	  break;
+      	}
       }
     }
-    cout << index << endl;
     strcpy(smallestVertex, table[index][0]);
+    int cumulativeDist = charToInt(table[index][1]);
     Node* traversal;
     for(int d = 0; d < 20; d++) {
       if(strcmp(adjacency[d]->getLabel(), smallestVertex) == 0) {
@@ -170,11 +171,16 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
         char end[10];
         strcpy(end, traversal->getEndVertex());
         int weight = traversal->getWeight();
+        // find edge vertex in Djikstra table
         for(int f = 0; f < vertexNum; f++) {
           if(strcmp(table[f][0], end) == 0) {
-	    char* myChar;
-            strcpy(table[f][1], intToChar(weight, myChar));
-            strcpy(table[f][2], smallestVertex);
+            int prevShortest = charToInt(table[f][1]);
+            cout << prevShortest << endl;
+            if(cumulativeDist + weight < prevShortest) {
+              char* myChar;
+              strcpy(table[f][1], intToChar(cumulativeDist + weight, myChar));
+              strcpy(table[f][2], smallestVertex); 
+            }
           }
         }
       }
@@ -189,6 +195,17 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     }
     cout << endl;
   }
+}
+
+int charToInt(char* myChar) {
+  int size = strlen(myChar);
+  int degreeCounter = 1;
+  int output = 0;
+  for(int i = size-1; i >= 0; i--) {
+    output += (myChar[i]-'0')*degreeCounter;
+    degreeCounter *= 10;
+  }
+  return output;
 }
 
 char* intToChar(int weight, char* myChar) {
