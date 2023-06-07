@@ -14,10 +14,11 @@ void addVertex(Node** adjacency, char* label, int &vertexNum);
 void addEdge(Node** adjacency, char* begin, char* end, int weight);
 void deleteVertex(Node** adjacency, char* label, int &vertexNum);
 void deleteEdge(Node** adjacency, char* begin, char* end);
-void findPath(Node** adjacency, char* begin, char* end, int vertexNum);
 void print(Node** adjacency);
 char* intToChar(int weight, char* myChar);
 int charToInt(char* myChar);
+void findPath(Node** adjacency, char* begin, char* end, int vertexNum);
+void createPath(char** table, char** path, char* begin, char* end, int vertexNum, int &total);
 
 int main() { 
   // Initializing variables
@@ -106,6 +107,45 @@ int main() {
   return 0;
 }
 
+int charToInt(char* myChar) {
+  int size = strlen(myChar);
+  int degreeCounter = 1;
+  int output = 0;
+  for(int i = size-1; i >= 0; i--) {
+    output += (myChar[i]-'0')*degreeCounter;
+    degreeCounter *= 10;
+  }
+  return output;
+}
+
+char* intToChar(int weight, char* myChar) {
+  int divisor = 100000;
+  int modulo;
+  int numDegree = 0;
+  int dupNum = weight;
+  while(dupNum/10 != 0) {
+    numDegree++;
+    dupNum /= 10;
+  }
+  numDegree++;
+  myChar = new char[numDegree+1];
+  myChar[numDegree] = '\0';
+  for(int b = 0; b < 3; b++) {
+    while(weight % divisor != 0 && weight % divisor > 9) {
+      divisor /= 10;
+    }
+    modulo = weight % divisor;
+    weight = (weight-modulo)/10;
+    for(int i = numDegree-1; i >= 0; i--) {
+      if(isdigit(myChar[i]) == 0) {
+        myChar[i] = (char)modulo+'0';
+        break;
+      }
+    }
+  }
+  return myChar;
+}
+
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   char* table[vertexNum][3];
   char* visited[vertexNum];
@@ -189,51 +229,36 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     strcpy(visited[vertexNum-unvisited], table[index][0]);
     unvisited--;
   }
-  for(int a = 0; a < vertexNum; a++) {
-    for(int b = 0; b < 3; b++) {
-      cout << table[a][b] << " ";
-    }
-    cout << endl;
+  char path[vertexNum];
+  for(int var = 0; var < vertexNum; var++) {
+    path[var] = ' ';
   }
+  int total = 0;
+  createPath(table, path, begin, end, vertexNum, total);
+  for(int test = 0; test < vertexNum; test++) {
+    cout << path[test] << " ";
+  }
+  cout << total;
 }
 
-int charToInt(char* myChar) {
-  int size = strlen(myChar);
-  int degreeCounter = 1;
-  int output = 0;
-  for(int i = size-1; i >= 0; i--) {
-    output += (myChar[i]-'0')*degreeCounter;
-    degreeCounter *= 10;
-  }
-  return output;
-}
-
-char* intToChar(int weight, char* myChar) {
-  int divisor = 100000;
-  int modulo;
-  int numDegree = 0;
-  int dupNum = weight;
-  while(dupNum/10 != 0) {
-    numDegree++;
-    dupNum /= 10;
-  }
-  numDegree++;
-  myChar = new char[numDegree+1];
-  myChar[numDegree] = '\0';
-  for(int b = 0; b < 3; b++) {
-    while(weight % divisor != 0 && weight % divisor > 9) {
-      divisor /= 10;
-    }
-    modulo = weight % divisor;
-    weight = (weight-modulo)/10;
-    for(int i = numDegree-1; i >= 0; i--) {
-      if(isdigit(myChar[i]) == 0) {
-        myChar[i] = (char)modulo+'0';
-        break;
-      }
+void createPath(char** table, char** path, char* begin, char* end, int vertexNum, int &total) {
+  char nextEnd[10];
+  for(int i = 0; i < vertexNum; i++) {
+    if(strcmp(path[i], " ") != 0) {
+      strcpy(path[i], end);
+      break;
     }
   }
-  return myChar;
+  for(int j = 0; j < vertexNum; j++) {
+    if(strcmp(table[j][0], end) == 0) {
+      strcpy(nextEnd, table[j][2]);
+      total += charToInt(table[j][1]);
+      break;
+    }
+  }
+  if(strcmp(begin, end) != 0) {
+    createPath(table, path, begin, nextEnd, vertexNum, total);
+  } 
 }
 
 void deleteEdge(Node** adjacency, char* begin, char* end) {
