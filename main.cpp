@@ -18,7 +18,7 @@ void print(Node** adjacency);
 char* intToChar(int weight, char* myChar);
 int charToInt(char* myChar);
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum);
-void createPath(char** table, char** path, char* begin, char* end, int vertexNum, int &total);
+void createPath(char*** table, char** path, char* begin, char* end, int vertexNum, int &total);
 
 int main() { 
   // Initializing variables
@@ -147,7 +147,10 @@ char* intToChar(int weight, char* myChar) {
 }
 
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
-  char* table[vertexNum][3];
+  char*** table = new char**[vertexNum];
+  for (int i = 0; i < vertexNum; i++) {
+    table[i] = new char*[3];
+  }
   char* visited[vertexNum];
   char* unVisited[vertexNum];
   for (int i = 0; i < vertexNum; i++) {
@@ -229,9 +232,9 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     strcpy(visited[vertexNum-unvisited], table[index][0]);
     unvisited--;
   }
-  char path[vertexNum];
+  char* path[vertexNum];
   for(int var = 0; var < vertexNum; var++) {
-    path[var] = ' ';
+    strcpy(path[var], " ");
   }
   int total = 0;
   createPath(table, path, begin, end, vertexNum, total);
@@ -241,7 +244,7 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   cout << total;
 }
 
-void createPath(char** table, char** path, char* begin, char* end, int vertexNum, int &total) {
+void createPath(char*** table, char** path, char* begin, char* end, int vertexNum, int &total) {
   char nextEnd[10];
   for(int i = 0; i < vertexNum; i++) {
     if(strcmp(path[i], " ") != 0) {
