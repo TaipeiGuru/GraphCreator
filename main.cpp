@@ -1,5 +1,5 @@
 
-// This is the Binary Search Tree project, which sorts integer values into a binary tree. Last modified by Jason Randolph on 4-7-23.
+// This is the Graph Creator project, which creates graphs of nodes and can find the shortest path betwee them. Last modified by Jason Randolph on 6-7-23.
 
 // Imports
 #include <iostream>
@@ -42,7 +42,6 @@ int main() {
     cin.get(input, 20);
     cin.clear();
     cin.ignore(10000, '\n');
-	  
     if(strcmp(input, "ADD VERTEX") == 0) {
       cout << "What is the vertex label?" << endl;
       cin >> input;
@@ -73,13 +72,14 @@ int main() {
       cin.ignore(10000, '\n');
       bool exists = false;
       char myLabel[10];
+      // check to see if vertex exists
       for(int i = 0; i < 20; i++) {
-	if(adjacency[i] != NULL) {
-	  strcpy(myLabel, adjacency[i]->getLabel());  
-	  if(strcmp(myLabel, input) == 0) {
-	    exists = true;
-	  }
-	}
+        if(adjacency[i] != NULL) {
+          strcpy(myLabel, adjacency[i]->getLabel());  
+          if(strcmp(myLabel, input) == 0) {
+            exists = true;
+          }
+        }
       }
       if(exists == false) {
         cout << "This vertex does not exist." << endl;
@@ -121,10 +121,13 @@ int main() {
   return 0;
 }
 
+// function that converts a char array to an int
 int charToInt(char* myChar) {
+  // get size of integer
   int size = strlen(myChar);
   int degreeCounter = 1;
   int output = 0;
+  // starting from the 1s digit, convert to integer, multiply by appropriate degree, and then add to output
   for(int i = size-1; i >= 0; i--) {
     output += (myChar[i]-'0')*degreeCounter;
     degreeCounter *= 10;
@@ -132,11 +135,13 @@ int charToInt(char* myChar) {
   return output;
 }
 
+// function that converts an integer to a char. Help from https://www.geeksforgeeks.org/cpp-program-for-int-to-char-conversion/
 char* intToChar(int weight, char* myChar) {
   int divisor = 100000;
   int modulo;
   int numDegree = 0;
   int dupNum = weight;
+  // find degree of number
   while(dupNum/10 != 0) {
     numDegree++;
     dupNum /= 10;
@@ -144,12 +149,14 @@ char* intToChar(int weight, char* myChar) {
   numDegree++;
   myChar = new char[numDegree+1];
   myChar[numDegree] = '\0';
+  // find modulo and add to char array. Then, divide by 10 and repeat process until the number has been fully converted
   for(int b = 0; b < 3; b++) {
     while(weight % divisor != 0 && weight % divisor > 9) {
       divisor /= 10;
     }
     modulo = weight % divisor;
     weight = (weight-modulo)/10;
+    // adding to char array using + '0'
     for(int i = numDegree-1; i >= 0; i--) {
       if(isdigit(myChar[i]) == 0) {
         myChar[i] = (char)modulo+'0';
@@ -160,14 +167,18 @@ char* intToChar(int weight, char* myChar) {
   return myChar;
 }
 
+// function that finds the shortest path between two nodes
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
+  // Creating Djikstra's table. Help with triple pointer from Galbraith
   char*** table = new char**[vertexNum];
   bool beginExists = false;
   bool endExists = false;
   char myLabel[10];
+  // initializing rows of the table
   for (int i = 0; i < vertexNum; i++) {
     table[i] = new char*[3];
   }
+  // check to see if vertices exist
   for(int i = 0; i < 20; i++) {
     if(adjacency[i] != NULL) {
       strcpy(myLabel, adjacency[i]->getLabel());  
@@ -179,10 +190,12 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
       }
     }
   }
+  // if not, alert user and end the function
   if(beginExists == false || endExists == false) {
     cout << "One of your vertices is invalid." << endl;
     return;
   }
+  // create arrays for visited/unvisited nodes
   char* visited[vertexNum];
   char* unVisited[vertexNum];
   for (int i = 0; i < vertexNum; i++) {
@@ -194,12 +207,15 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     visited[i] = new char[10];
     unVisited[i] = new char[10];
   }
+  // add in nodes from adjacency table
   Node* current = adjacency[0]->getNext();
   for(int i = 0; i < vertexNum; i++) {
     if(current != NULL) {
       strcpy(visited[i], " ");
       strcpy(unVisited[i], current->getLabel());
+      // set up Djikstra's table with vertices
       strcpy(table[i][0], current->getLabel());
+      // if the node is the beginning vertex, set distance to 0. Otherwise, set to max distance (999999 as arbitrary value)
       if(strcmp(table[i][0], begin) == 0) {
         strcpy(table[i][1], "0");
       } else {
@@ -213,17 +229,22 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   int index;
   int unvisited = vertexNum;
   char smallestVertex[10];
+  // main loop that constructs Djikstra's table
   while(unvisited > 0) {
     smallest = 999999;
     for(int c = 0; c < vertexNum; c++) {
+      // convert int to char
       int data = atoi(table[c][1]);
+      // look for vertex with smaller distance
       if(data < smallest) {
+        // check to see if vertex has been visited
       	bool exists = false;
       	for(int h = 0; h < vertexNum; h++) {
       	  if(strcmp(visited[h], table[c][0]) == 0) {
       	    exists = true;
       	  }
       	}
+        // if vertex has lowest number and is unvisited, save that index
       	if(exists == false) { 
       	  smallest = data;
       	  index = c;
@@ -232,14 +253,17 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
       }
     }
     strcpy(smallestVertex, table[index][0]);
+    // retrieve distance of smallest vertex
     int cumulativeDist = charToInt(table[index][1]);
     Node* traversal;
+    // find the correct row in the adjacency table for the smallest vertex
     for(int d = 0; d < 20; d++) {
       if(strcmp(adjacency[d]->getLabel(), smallestVertex) == 0) {
         traversal = adjacency[d]->getNext();
         break;
       }
     }
+    // in that row, find any neighhboring vertices
     for(int e = 0; e < vertexNum; e++) {
       if(strcmp(traversal->getLabel(), "T") == 0) {
         char end[10];
@@ -248,7 +272,9 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
         // find edge vertex in Djikstra table
         for(int f = 0; f < vertexNum; f++) {
           if(strcmp(table[f][0], end) == 0) {
+            // find the previous shortest length
             int prevShortest = charToInt(table[f][1]);
+            // if the new length is less than the previous shortest, update it in Djikstra's table
             if(cumulativeDist + weight < prevShortest) {
               char* myChar;
               strcpy(table[f][1], intToChar(cumulativeDist + weight, myChar));
@@ -257,24 +283,30 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
           }
         }
       }
+      // repeat through the row
       traversal = traversal->getNext();
     }
+    // add the smallest vertex to the visited array and remove it from unvisited
     strcpy(visited[vertexNum-unvisited], table[index][0]);
     unvisited--;
   }
   char* path[vertexNum];
   int total;
   for(int var = 0; var < vertexNum; var++) {
+    // set each element in the path array to space
     path[var] = new char[10];
     strcpy(path[var], " ");
+    // if the vertex in the Djikstra's table matches the end vertex, set its distance value to the distance
     if(strcmp(table[var][0], end) == 0) {
       total = charToInt(table[var][1]);
     }
   }
+  // if total is greater than the max, this means there was no complete path from beginning to end. Alert the user and end the function
   if(total >= 999999) {
     cout << "No path exists between " << begin << " and " << end << endl;
     return;
   }
+  // create the shortest path
   createPath(table, path, begin, end, vertexNum, total);
   cout << "Shortest Path: "; 
   for(int test = vertexNum-1; test >= 0; test--) {
@@ -286,26 +318,32 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   cout << "Total distance: " << total << endl;
 }
 
+// function that creates the shortest path
 void createPath(char*** table, char** path, char* begin, char* end, int vertexNum, int &total) {
   char nextEnd[10];
+  // add ending vertex to the path
   for(int i = 0; i < vertexNum; i++) {
     if(strcmp(path[i], " ") == 0) {
       strcpy(path[i], end);
       break;
     }
   }
+  // set the next End to the previous vertex of the current end
   for(int j = 0; j < vertexNum; j++) {
     if(strcmp(table[j][0], end) == 0) {
       strcpy(nextEnd, table[j][2]);
       break;
     }
   }
+  // if beginning and ending vertices don't match, recursively call the function
   if(strcmp(begin, end) != 0) {
     createPath(table, path, begin, nextEnd, vertexNum, total);
   } 
 }
 
+// function that deletes edges
 void deleteEdge(Node** adjacency, char* begin, char* end) {
+  // check to see if vertices exist
   bool beginExists = false;
   bool endExists = false;
   char myLabel[10];
@@ -328,6 +366,7 @@ void deleteEdge(Node** adjacency, char* begin, char* end) {
   Node* temp = adjacency[0];
   // find column number of vertex
   while(strcmp(temp->getLabel(), end) != 0) {
+    // checks to see if vertex exists
     if(temp->getNext() != NULL) {
       temp = temp->getNext();
       counter++;
@@ -359,11 +398,13 @@ void deleteEdge(Node** adjacency, char* begin, char* end) {
   }
 }
 
+// function that adds edges
 void addEdge(Node** adjacency, char* begin, char* end, int weight) {
   int counter = 0;
   Node* temp = adjacency[0];
   // find column number of vertex
   while(strcmp(temp->getLabel(), end) != 0) {
+    // checks to see if vertex exists
     if(temp->getNext() != NULL) {
       temp = temp->getNext();
       counter++;
@@ -395,7 +436,7 @@ void addEdge(Node** adjacency, char* begin, char* end, int weight) {
   }
 }
 
-// vertex does not exist?
+// function that deletes vertices
 void deleteVertex(Node** adjacency, char* label, int &vertexNum) {
   int a = 0;
   // find deleted vertex in header
@@ -444,6 +485,7 @@ void deleteVertex(Node** adjacency, char* label, int &vertexNum) {
   vertexNum--;
 }
 
+// function that adds vertices
 void addVertex(Node** adjacency, char* label, int &vertexNum) {
   vertexNum++;
   int i = 1;
@@ -484,16 +526,19 @@ void addVertex(Node** adjacency, char* label, int &vertexNum) {
   tempNode->setNext(newHeaderNode);
 }
 
+// function that prints the adjacency table
 void print(Node** adjacency) {
+  // for loop and while loop used to cycle through adjacency table and print values
   for(int i = 0; i < 21; i++) {
     if(adjacency[i] != NULL) {
       Node* tempNode = adjacency[i];
       while(tempNode != NULL) {
+        // ignore head pointer, has no node data
         if(strcmp(tempNode->getLabel(), "head") != 0) {
-	  cout << tempNode->getLabel() << "\t";
-	} else {
-	  cout << "\t";
-	}
+          cout << tempNode->getLabel() << "\t";
+        } else {
+          cout << "\t";
+        }
         tempNode = tempNode->getNext();
       }
       cout << endl;
