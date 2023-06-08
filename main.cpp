@@ -74,15 +74,15 @@ int main() {
       bool exists = false;
       char myLabel[10];
       for(int i = 0; i < 20; i++) {
-      if(adjacency[i] != NULL) {
-        strcpy(myLabel, adjacency[i]->getLabel());  
-        if(strcmp(myLabel, input) == 0) {
-          exists = true;
-        }
-      }  
+	if(adjacency[i] != NULL) {
+	  strcpy(myLabel, adjacency[i]->getLabel());  
+	  if(strcmp(myLabel, input) == 0) {
+	    exists = true;
+	  }
+	}
+      }
       if(exists == false) {
         cout << "This vertex does not exist." << endl;
-        return;
       } else {
         deleteVertex(adjacency, input, vertexNum);
       }
