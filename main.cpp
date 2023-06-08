@@ -1,5 +1,5 @@
 
-// This is the Graph Creator project, which creates graphs of nodes and can find the shortest path betwee them. Last modified by Jason Randolph on 6-7-23.
+// This is the Graph Creator project, which creates graphs of nodes and can find the shortest path betwee them. Last modified by Jason Randolph on 6-7-23 at 6:32pm. Help from Galbraith, Nividh S., Vatsal P.
 
 // Imports
 #include <iostream>
