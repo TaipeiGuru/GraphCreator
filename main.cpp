@@ -71,7 +71,21 @@ int main() {
       cin >> input;
       cin.clear();
       cin.ignore(10000, '\n');
-      deleteVertex(adjacency, input, vertexNum);
+      bool exists = false;
+      char myLabel[10];
+      for(int i = 0; i < 20; i++) {
+      if(adjacency[i] != NULL) {
+        strcpy(myLabel, adjacency[i]->getLabel());  
+        if(strcmp(myLabel, input) == 0) {
+          exists = true;
+        }
+      }  
+      if(exists == false) {
+        cout << "This vertex does not exist." << endl;
+        return;
+      } else {
+        deleteVertex(adjacency, input, vertexNum);
+      }
     } else if(strcmp(input, "REMOVE EDGE") == 0) {
       char begin[10];
       char end[10];
@@ -148,8 +162,26 @@ char* intToChar(int weight, char* myChar) {
 
 void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
   char*** table = new char**[vertexNum];
+  bool beginExists = false;
+  bool endExists = false;
+  char myLabel[10];
   for (int i = 0; i < vertexNum; i++) {
     table[i] = new char*[3];
+  }
+  for(int i = 0; i < 20; i++) {
+    if(adjacency[i] != NULL) {
+      strcpy(myLabel, adjacency[i]->getLabel());  
+      if(strcmp(myLabel, begin) == 0) {
+        beginExists = true;
+      }
+      if(strcmp(myLabel, end) == 0) {
+        endExists = true;
+      }
+    }
+  }
+  if(beginExists == false || endExists == false) {
+    cout << "One of your vertices is invalid." << endl;
+    return;
   }
   char* visited[vertexNum];
   char* unVisited[vertexNum];
@@ -158,7 +190,6 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
       table[i][j] = new char[10]; 
     }
   }
-
   for (int i = 0; i < vertexNum; i++) {
     visited[i] = new char[10];
     unVisited[i] = new char[10];
@@ -218,7 +249,6 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
         for(int f = 0; f < vertexNum; f++) {
           if(strcmp(table[f][0], end) == 0) {
             int prevShortest = charToInt(table[f][1]);
-            cout << prevShortest << endl;
             if(cumulativeDist + weight < prevShortest) {
               char* myChar;
               strcpy(table[f][1], intToChar(cumulativeDist + weight, myChar));
@@ -233,21 +263,33 @@ void findPath(Node** adjacency, char* begin, char* end, int vertexNum) {
     unvisited--;
   }
   char* path[vertexNum];
+  int total;
   for(int var = 0; var < vertexNum; var++) {
+    path[var] = new char[10];
     strcpy(path[var], " ");
+    if(strcmp(table[var][0], end) == 0) {
+      total = charToInt(table[var][1]);
+    }
   }
-  int total = 0;
+  if(total >= 999999) {
+    cout << "No path exists between " << begin << " and " << end << endl;
+    return;
+  }
   createPath(table, path, begin, end, vertexNum, total);
-  for(int test = 0; test < vertexNum; test++) {
-    cout << path[test] << " ";
+  cout << "Shortest Path: "; 
+  for(int test = vertexNum-1; test >= 0; test--) {
+    if(strcmp(path[test], " ") != 0) {
+      cout << path[test] << " "; 
+    }
   }
-  cout << total;
+  cout << endl;
+  cout << "Total distance: " << total << endl;
 }
 
 void createPath(char*** table, char** path, char* begin, char* end, int vertexNum, int &total) {
   char nextEnd[10];
   for(int i = 0; i < vertexNum; i++) {
-    if(strcmp(path[i], " ") != 0) {
+    if(strcmp(path[i], " ") == 0) {
       strcpy(path[i], end);
       break;
     }
@@ -255,7 +297,6 @@ void createPath(char*** table, char** path, char* begin, char* end, int vertexNu
   for(int j = 0; j < vertexNum; j++) {
     if(strcmp(table[j][0], end) == 0) {
       strcpy(nextEnd, table[j][2]);
-      total += charToInt(table[j][1]);
       break;
     }
   }
@@ -265,6 +306,24 @@ void createPath(char*** table, char** path, char* begin, char* end, int vertexNu
 }
 
 void deleteEdge(Node** adjacency, char* begin, char* end) {
+  bool beginExists = false;
+  bool endExists = false;
+  char myLabel[10];
+  for(int i = 0; i < 20; i++) {
+    if(adjacency[i] != NULL) {
+      strcpy(myLabel, adjacency[i]->getLabel());  
+      if(strcmp(myLabel, begin) == 0) {
+        beginExists = true;
+      }
+      if(strcmp(myLabel, end) == 0) {
+        endExists = true;
+      }
+    }
+  }
+  if(beginExists == false || endExists == false) {
+    cout << "One of your vertices is invalid." << endl;
+    return;
+  }
   int counter = 0;
   Node* temp = adjacency[0];
   // find column number of vertex
